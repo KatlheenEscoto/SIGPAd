@@ -1,0 +1,81 @@
+{% extends "baseUser.html" %}
+{% load staticfiles %} 
+{% block Body %}
+<form method="POST" action="" enctype="multipart/form-data" accept-charset="UTF-8" class="form-horizontal row-border" >
+    {% csrf_token %}
+        <div class="center">
+        <a href="{% url 'inventario:graficaMes' %}" class="btn btn-success">VENTAS POR MES</a>
+        <a href="{% url 'inventario:graficaEmpleado' %}" class="btn btn-success">VENTAS POR EMPLEADO</a>
+        <a href="{% url 'inventario:graficaProducto' %}" class="btn btn-success">PRODUCTOS MÁS VENDIDOS</a>
+    </div>
+        <select id="mes" name="mes">
+            {% for m in meses %}
+            <option value="{{m}}">{{m}}</option>
+            {% endfor %}
+        </select>
+
+    <input type="submit" class="btn btn-success" value="Aceptar">
+</form>
+
+<canvas id="productosChart" height="120"></canvas>
+
+
+<script>
+var ctx = document.getElementById("productosChart");
+var productos = JSON.parse('{{ productos|safe }}');
+var total = JSON.parse('{{ total|safe }}');
+var productosChart = new Chart(ctx, {
+    type: 'pie',
+    data: {
+        labels: productos,
+        datasets: [{
+            {% if mes %}
+             {% for m in meses %}
+            label: 'PRODUCTOS MAS VENDIDOS DEL MES: {{m}}',
+            {% endfor %}
+            {% endif %}
+
+            data: total,
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.5)',
+                'rgba(54, 162, 235, 0.5)',
+                'rgba(255, 206, 86, 0.5)',
+                'rgba(75, 192, 192, 0.5)',
+                'rgba(153, 102, 255, 0.5)',
+                'rgba(255, 159, 64, 0.5)',
+                'rgba(255, 99, 132, 0.5)',
+                'rgba(54, 162, 235, 0.5)',
+                'rgba(255, 206, 86, 0.5)',
+                'rgba(75, 192, 192, 0.5)',
+                'rgba(153, 102, 255, 0.5)',
+                'rgba(255, 159, 64, 0.5)',
+            ],
+            borderColor: [
+                'rgba(255,99,132,1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)',
+                'rgba(255,99,132,1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)',
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero:true
+                }
+            }]
+        }
+    }
+});
+</script>
+{% endblock Body%}
